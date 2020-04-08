@@ -45,8 +45,14 @@ public class StringCalculatorTest {
     @Test
     public void shouldReturnErrorMessageWithIndexWhenSeparatorsNextToEachOther() {
         assertThat(sut.add("175.2,\\n35"))
-                .isEqualTo("Number expected but '\\n' found at position 6.");
+                .isEqualTo("Number expected but '\\n' found at position 6");
         assertThat(sut.add("175.2\\n,35"))
-                .isEqualTo("Number expected but ',' found at position 7.");
+                .isEqualTo("Number expected but ',' found at position 7");
+    }
+
+    @Test
+    public void shouldReturnEOFExceptionWhenSeparatorInLastPosition() {
+        assertThat(sut.add("1,3,")).isEqualTo("Number expected but EOF found");
+        assertThat(sut.add("1\n3\n")).isEqualTo("Number expected but EOF found");
     }
 }

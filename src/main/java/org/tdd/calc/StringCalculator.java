@@ -1,5 +1,7 @@
 package org.tdd.calc;
 
+import java.util.regex.Pattern;
+
 public class StringCalculator {
     public String add(String input) {
         if (input.isEmpty()) { return "0"; }
@@ -10,6 +12,7 @@ public class StringCalculator {
         if (newLineSeparatorNextToCommaSeparator(input)) {
             return getExceptionMessage(",", input);
         }
+        if (inputEndsWithSeparator(input)) { return "Number expected but EOF found"; }
 
         String[] stringValues = splitInput(input);
         double sum = 0;
@@ -23,13 +26,16 @@ public class StringCalculator {
         return String.valueOf(convertToOneDecimalPlace(sum));
     }
 
+    private boolean inputEndsWithSeparator(String input) {
+        return Pattern.compile("[,\n]$").matcher(input).find();
+    }
+
     private String getExceptionMessage(String separator, String input) {
         int index = separator.equals(",") ? indexOfCommaSeparator(input) : indexOfNewLineSeparator(input);
         return "Number expected but '" +
                 separator +
                 "' found at position " +
-                index +
-                ".";
+                index;
     }
 
     private int indexOfCommaSeparator(String input) {
