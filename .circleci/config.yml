@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - checkout
-      - run: mvn -f Katas/BowlingOOPKata clean test
+      - run: mvn clean test
 
 workflows:
   version: 2
