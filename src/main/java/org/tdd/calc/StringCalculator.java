@@ -2,6 +2,8 @@ package org.tdd.calc;
 
 public class StringCalculator {
     public String add(String input) {
-        return "0";
+        if (input.isEmpty()) { return "0"; }
+
+        return input;
     }
 }

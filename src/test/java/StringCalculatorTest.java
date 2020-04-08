@@ -16,4 +16,9 @@ public class StringCalculatorTest {
     public void shouldReturnZeroWhenGotEmptyString() {
         assertThat(sut.add("")).isEqualTo("0");
     }
+
+    @Test
+    public void shouldReturnNumberWhenGivenNumber() {
+        assertThat(sut.add("1")).isEqualTo("1");
+    }
 }
