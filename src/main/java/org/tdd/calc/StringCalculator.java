@@ -30,7 +30,7 @@ public class StringCalculator {
     }
 
     private String[] splitInput(String input) {
-        return input.split(",");
+        return input.split("[,\n]");
     }
 
     private double convertToDouble(String stringValue) {

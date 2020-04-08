@@ -36,4 +36,9 @@ public class StringCalculatorTest {
     public void shouldReturnSumOfMultipleNumbersWhenSeparatedByComma() {
         assertThat(sut.add("1,2.2,3,4.4,5")).isEqualTo("15.6");
     }
+
+    @Test
+    public void shouldReturnSumOfNumbersWhenSeparatedByCommaAndNewLine() {
+        assertThat(sut.add("1\n2,3")).isEqualTo("6");
+    }
 }
