@@ -5,8 +5,11 @@ public class StringCalculator {
         if (input.isEmpty()) { return "0"; }
         if (splitInput(input).length <= 1) { return input; }
 
-        int firstNumber = convertToInteger(splitInput(input)[0]);
-        int secondNumber = convertToInteger(splitInput(input)[1]);
+        double firstNumber = convertToDouble(splitInput(input)[0]);
+        double secondNumber = convertToDouble(splitInput(input)[1]);
+        double sum = firstNumber + secondNumber;
+
+        if (sum % 1 == 0) { return String.valueOf((int)sum); }
 
         return String.valueOf(firstNumber + secondNumber);
     }
@@ -15,7 +18,7 @@ public class StringCalculator {
         return input.split(",");
     }
 
-    private int convertToInteger(String stringValue) {
-        return Integer.parseInt(stringValue);
+    private double convertToDouble(String stringValue) {
+        return Double.parseDouble(stringValue);
     }
 }
