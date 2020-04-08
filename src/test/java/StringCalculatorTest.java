@@ -31,4 +31,9 @@ public class StringCalculatorTest {
     public void shouldReturnSumOfTwoDoubleNumbersWhenSeparatedByComma() {
         assertThat(sut.add("1.1,1.2")).isEqualTo("2.3");
     }
+
+    @Test
+    public void shouldReturnSumOfMultipleNumbersWhenSeparatedByComma() {
+        assertThat(sut.add("1,2.2,3,4.4,5")).isEqualTo("15.6");
+    }
 }
