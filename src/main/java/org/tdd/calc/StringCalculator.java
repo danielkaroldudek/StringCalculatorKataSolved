@@ -4,6 +4,12 @@ public class StringCalculator {
     public String add(String input) {
         if (input.isEmpty()) { return "0"; }
         if (isSingleNumber(input)) { return input; }
+        if (commaSeparatorNextToNewLineSeparator(input)) {
+            return getExceptionMessage("\\n", input);
+        }
+        if (newLineSeparatorNextToCommaSeparator(input)) {
+            return getExceptionMessage(",", input);
+        }
 
         String[] stringValues = splitInput(input);
         double sum = 0;
@@ -15,6 +21,31 @@ public class StringCalculator {
         if (isInteger(sum)) { return String.valueOf((int)sum); }
 
         return String.valueOf(convertToOneDecimalPlace(sum));
+    }
+
+    private String getExceptionMessage(String separator, String input) {
+        int index = separator.equals(",") ? indexOfCommaSeparator(input) : indexOfNewLineSeparator(input);
+        return "Number expected but '" +
+                separator +
+                "' found at position " +
+                index +
+                ".";
+    }
+
+    private int indexOfCommaSeparator(String input) {
+        return input.indexOf(',');
+    }
+
+    private int indexOfNewLineSeparator(String input) {
+        return input.indexOf("\\n");
+    }
+
+    private boolean newLineSeparatorNextToCommaSeparator(String input) {
+        return  input.contains("\\n,");
+    }
+
+    private boolean commaSeparatorNextToNewLineSeparator(String input) {
+        return input.contains(",\\n");
     }
 
     private double convertToOneDecimalPlace(double sum) {

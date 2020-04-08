@@ -41,4 +41,12 @@ public class StringCalculatorTest {
     public void shouldReturnSumOfNumbersWhenSeparatedByCommaAndNewLine() {
         assertThat(sut.add("1\n2,3")).isEqualTo("6");
     }
+
+    @Test
+    public void shouldReturnErrorMessageWithIndexWhenSeparatorsNextToEachOther() {
+        assertThat(sut.add("175.2,\\n35"))
+                .isEqualTo("Number expected but '\\n' found at position 6.");
+        assertThat(sut.add("175.2\\n,35"))
+                .isEqualTo("Number expected but ',' found at position 7.");
+    }
 }
