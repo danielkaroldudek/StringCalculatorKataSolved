@@ -21,4 +21,9 @@ public class StringCalculatorTest {
     public void shouldReturnNumberWhenGivenNumber() {
         assertThat(sut.add("1")).isEqualTo("1");
     }
+
+    @Test
+    public void shouldReturnSumOfTwoNumbersWhenSeparatedByComma() {
+        assertThat(sut.add("1,2")).isEqualTo("3");
+    }
 }
