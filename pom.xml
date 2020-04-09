@@ -18,7 +18,28 @@
         <assertj.version>3.15.0</assertj.version>
         <junit-jupiter.version>5.6.1</junit-jupiter.version>
         <commons-lang3.version>3.9</commons-lang3.version>
+
+        <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
+        <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
     </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <version>${coveralls-maven-plugin.version}</version>
+                <configuration>
+                    <repoToken>the_repo_token</repoToken>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>${cobertura-maven-plugin.version}</version>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>
