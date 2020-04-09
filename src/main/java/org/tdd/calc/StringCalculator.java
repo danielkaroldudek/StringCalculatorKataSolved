@@ -50,15 +50,15 @@ public class StringCalculator {
     }
 
     private int indexOfNewLineSeparator(String input) {
-        return input.indexOf("\\n");
+        return input.indexOf("\n");
     }
 
     private boolean newLineSeparatorNextToCommaSeparator(String input) {
-        return  input.contains("\\n,");
+        return  input.contains("\n,");
     }
 
     private boolean commaSeparatorNextToNewLineSeparator(String input) {
-        return input.contains(",\\n");
+        return input.contains(",\n");
     }
 
     private double convertToOneDecimalPlace(double sum) {

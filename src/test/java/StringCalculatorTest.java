@@ -55,8 +55,8 @@ public class StringCalculatorTest {
 
     static Stream<Arguments> shouldReturnErrorMessageWithIndexWhenSeparatorsNextToEachOtherParameters() {
         return Stream.of(
-                Arguments.of((Object) new String[]{"175.2,\\n35", "Number expected but '\\n' found at position 6"}),
-                Arguments.of((Object) new String[]{"175.2\\n,35", "Number expected but ',' found at position 7"})
+                Arguments.of((Object) new String[]{"175.2,\n35", "Number expected but '\\n' found at position 6"}),
+                Arguments.of((Object) new String[]{"175.2\n,35", "Number expected but ',' found at position 6"})
         );
     }
 
