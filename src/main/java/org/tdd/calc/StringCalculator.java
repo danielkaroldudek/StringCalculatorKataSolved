@@ -17,6 +17,11 @@ public class StringCalculator {
         if (inputEndsWithSeparator(input)) { return "Number expected but EOF found"; }
 
         String customSeparator = getCustomSeparator(input);
+        input = getSubstringIfCustomSeparatorPresent(input, customSeparator);
+        if (hasMultipleSeparators(customSeparator, input)) {
+            return getTwoSeparatorsExceptionMessage(customSeparator, input);
+        }
+
         String[] stringValues = splitInput(input, customSeparator);
         double sum = 0;
 
@@ -27,6 +32,24 @@ public class StringCalculator {
         if (isInteger(sum)) { return String.valueOf((int)sum); }
 
         return String.valueOf(convertToOneDecimalPlace(sum));
+    }
+
+    private String getSubstringIfCustomSeparatorPresent(String  input, String customSeparator) {
+        if(customSeparator != null) {
+            input = input.substring(input.indexOf("\n") + 1);
+        }
+        return input;
+    }
+
+    private String getTwoSeparatorsExceptionMessage(String customSeparator, String input) {
+        return "'" + customSeparator +
+                "' expected but ',' found at position " +
+                indexOfCommaSeparator(input);
+    }
+
+    private boolean hasMultipleSeparators(String customSeparator, String input) {
+        return (customSeparator != null) &&
+                Pattern.compile("[,]").matcher(input).find();
     }
 
     private String getCustomSeparator(String input) {
@@ -74,13 +97,12 @@ public class StringCalculator {
     }
 
     private String[] splitInput(String input, String customSeparator) {
-        if (customSeparator == null || customSeparator.isEmpty()) {
+        if (customSeparator == null) {
             customSeparator = "[,\n]";
         } else {
             if (isVerticalSeparator(customSeparator)) {
                 customSeparator = escapeVerticalBarRegexSpecialSymbol();
             }
-            input = input.substring(input.indexOf("\n") + 1);
         }
 
         return input.split(customSeparator);

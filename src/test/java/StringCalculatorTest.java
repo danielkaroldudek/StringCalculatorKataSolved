@@ -55,8 +55,12 @@ public class StringCalculatorTest {
 
     static Stream<Arguments> shouldReturnErrorMessageWithIndexWhenSeparatorsNextToEachOtherParameters() {
         return Stream.of(
-                Arguments.of((Object) new String[]{"175.2,\n35", "Number expected but '\\n' found at position 6"}),
-                Arguments.of((Object) new String[]{"175.2\n,35", "Number expected but ',' found at position 6"})
+                Arguments.of((Object) new String[] {
+                        "175.2,\n35", "Number expected but '\\n' found at position 6"
+                }),
+                Arguments.of((Object) new String[] {
+                        "175.2\n,35", "Number expected but ',' found at position 6"
+                })
         );
     }
 
@@ -68,8 +72,12 @@ public class StringCalculatorTest {
 
     static Stream<Arguments> shouldReturnEOFExceptionWhenSeparatorInLastPositionParameters() {
         return Stream.of(
-                Arguments.of((Object) new String[]{"1,3,", "Number expected but EOF found"}),
-                Arguments.of((Object) new String[]{"1\n3\n", "Number expected but EOF found"})
+                Arguments.of((Object) new String[] {
+                        "1,3,", "Number expected but EOF found"
+                }),
+                Arguments.of((Object) new String[] {
+                        "1\n3\n", "Number expected but EOF found"
+                })
         );
     }
 
@@ -85,5 +93,11 @@ public class StringCalculatorTest {
                 Arguments.of((Object) new String[]{"//|\n1|2|3", "6"}),
                 Arguments.of((Object) new String[]{"//sep\n2sep3", "5"})
         );
+    }
+
+    @Test
+    void shouldReturnExceptionWhenTwoSeparationsInCustomSeparator() {
+        assertThat(sut.add("//|\n1|2,3"))
+                .isEqualTo("'|' expected but ',' found at position 3");
     }
 }
