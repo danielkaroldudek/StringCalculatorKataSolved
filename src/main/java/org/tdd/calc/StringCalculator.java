@@ -2,6 +2,9 @@ package org.tdd.calc;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.regex.Pattern;
 
 public class StringCalculator {
@@ -22,16 +25,56 @@ public class StringCalculator {
             return getTwoSeparatorsExceptionMessage(customSeparator, input);
         }
 
-        String[] stringValues = splitInput(input, customSeparator);
-        double sum = 0;
+        double[] values = convertToDoubles(splitInput(input, customSeparator));
+        if(containsNegativeNumbers(values)) {
+            return getNegativeNumbersExceptionMessage(values);
+        }
 
-        for(String stringValue : stringValues) {
-            sum += convertToDouble(stringValue);
+        double sum = 0;
+        for(double value : values) {
+            sum += value;
         }
 
         if (isInteger(sum)) { return String.valueOf((int)sum); }
 
         return String.valueOf(convertToOneDecimalPlace(sum));
+    }
+
+    private double[] convertToDoubles(String[] input) {
+        return Arrays.stream(input).mapToDouble(Double::parseDouble).toArray();
+    }
+
+    private String getNegativeNumbersExceptionMessage(double[] values) {
+        StringBuilder message = new StringBuilder("Negative not allowed : ");
+        Collection<Double> negatives = new ArrayList<>();
+
+        for (double value : values) {
+            if (value > 0) continue;
+            negatives.add(value);
+        }
+
+        for(int i = 0; i < negatives.size(); i++) {
+            double value = negatives.toArray(new Double[0])[i];
+            if (i > 0) {
+                message.append(", ");
+            }
+            if (isInteger(value)) {
+                message.append((int)value);
+                continue;
+            }
+            message.append(" ");
+            message.append(value);
+        }
+
+        return message.toString();
+    }
+
+    private boolean containsNegativeNumbers(double[] values) {
+        for(double value : values) {
+            if (value < 0) { return true; }
+        }
+
+        return false;
     }
 
     private String getSubstringIfCustomSeparatorPresent(String  input, String customSeparator) {
@@ -114,9 +157,5 @@ public class StringCalculator {
 
     private boolean isVerticalSeparator(String customSeparator) {
         return customSeparator.equals("|");
-    }
-
-    private double convertToDouble(String stringValue) {
-        return Double.parseDouble(stringValue);
     }
 }

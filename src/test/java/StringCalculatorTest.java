@@ -100,4 +100,17 @@ public class StringCalculatorTest {
         assertThat(sut.add("//|\n1|2,3"))
                 .isEqualTo("'|' expected but ',' found at position 3");
     }
+
+    @ParameterizedTest
+    @MethodSource("shouldReturnExceptionWhenAtLeastOneNegativeNumberProvidedParameters")
+    void shouldReturnExceptionWhenAtLeastOneNegativeNumberProvided(String[] input) {
+        assertThat(sut.add(input[0])).isEqualTo(input[1]);
+    }
+
+    static Stream<Arguments> shouldReturnExceptionWhenAtLeastOneNegativeNumberProvidedParameters() {
+        return Stream.of(
+                Arguments.of((Object) new String[]{"-1,2", "Negative not allowed : -1"}),
+                Arguments.of((Object) new String[]{"2,-4,-5", "Negative not allowed : -4, -5"})
+        );
+    }
 }
