@@ -1,14 +1,19 @@
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.tdd.calc.StringCalculator;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class StringCalculatorTest {
     private StringCalculator sut;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    public void init() {
         sut = new StringCalculator();
     }
 
@@ -42,17 +47,43 @@ public class StringCalculatorTest {
         assertThat(sut.add("1\n2,3")).isEqualTo("6");
     }
 
-    @Test
-    public void shouldReturnErrorMessageWithIndexWhenSeparatorsNextToEachOther() {
-        assertThat(sut.add("175.2,\\n35"))
-                .isEqualTo("Number expected but '\\n' found at position 6");
-        assertThat(sut.add("175.2\\n,35"))
-                .isEqualTo("Number expected but ',' found at position 7");
+    @ParameterizedTest
+    @MethodSource("shouldReturnErrorMessageWithIndexWhenSeparatorsNextToEachOtherParameters")
+    public void shouldReturnErrorMessageWithIndexWhenSeparatorsNextToEachOther(String[] input) {
+        assertThat(sut.add(input[0])).isEqualTo(input[1]);
     }
 
-    @Test
-    public void shouldReturnEOFExceptionWhenSeparatorInLastPosition() {
-        assertThat(sut.add("1,3,")).isEqualTo("Number expected but EOF found");
-        assertThat(sut.add("1\n3\n")).isEqualTo("Number expected but EOF found");
+    static Stream<Arguments> shouldReturnErrorMessageWithIndexWhenSeparatorsNextToEachOtherParameters() {
+        return Stream.of(
+                Arguments.of((Object) new String[]{"175.2,\\n35", "Number expected but '\\n' found at position 6"}),
+                Arguments.of((Object) new String[]{"175.2\\n,35", "Number expected but ',' found at position 7"})
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("shouldReturnEOFExceptionWhenSeparatorInLastPositionParameters")
+    public void shouldReturnEOFExceptionWhenSeparatorInLastPosition(String[] input) {
+        assertThat(sut.add(input[0])).isEqualTo(input[1]);
+    }
+
+    static Stream<Arguments> shouldReturnEOFExceptionWhenSeparatorInLastPositionParameters() {
+        return Stream.of(
+                Arguments.of((Object) new String[]{"1,3,", "Number expected but EOF found"}),
+                Arguments.of((Object) new String[]{"1\n3\n", "Number expected but EOF found"})
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("shouldReturnSumWhenSeparatedByCustomSeparatorParameters")
+    public void shouldReturnSumWhenSeparatedByCustomSeparator(String[] input) {
+        assertThat(sut.add(input[0])).isEqualTo(input[1]);
+    }
+
+    static Stream<Arguments> shouldReturnSumWhenSeparatedByCustomSeparatorParameters() {
+        return Stream.of(
+                Arguments.of((Object) new String[]{"//;\n1;2", "3"}),
+                Arguments.of((Object) new String[]{"//|\n1|2|3", "6"}),
+                Arguments.of((Object) new String[]{"//sep\n2sep3", "5"})
+        );
     }
 }

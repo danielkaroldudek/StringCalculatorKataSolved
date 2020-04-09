@@ -1,5 +1,7 @@
 package org.tdd.calc;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.regex.Pattern;
 
 public class StringCalculator {
@@ -14,7 +16,8 @@ public class StringCalculator {
         }
         if (inputEndsWithSeparator(input)) { return "Number expected but EOF found"; }
 
-        String[] stringValues = splitInput(input);
+        String customSeparator = getCustomSeparator(input);
+        String[] stringValues = splitInput(input, customSeparator);
         double sum = 0;
 
         for(String stringValue : stringValues) {
@@ -24,6 +27,10 @@ public class StringCalculator {
         if (isInteger(sum)) { return String.valueOf((int)sum); }
 
         return String.valueOf(convertToOneDecimalPlace(sum));
+    }
+
+    private String getCustomSeparator(String input) {
+        return StringUtils.substringBetween(input, "//", "\n");
     }
 
     private boolean inputEndsWithSeparator(String input) {
@@ -63,11 +70,28 @@ public class StringCalculator {
     }
 
     private boolean isSingleNumber(String input) {
-        return splitInput(input).length <= 1;
+        return input.length() == 1;
     }
 
-    private String[] splitInput(String input) {
-        return input.split("[,\n]");
+    private String[] splitInput(String input, String customSeparator) {
+        if (customSeparator == null || customSeparator.isEmpty()) {
+            customSeparator = "[,\n]";
+        } else {
+            if (isVerticalSeparator(customSeparator)) {
+                customSeparator = escapeVerticalBarRegexSpecialSymbol();
+            }
+            input = input.substring(input.indexOf("\n") + 1);
+        }
+
+        return input.split(customSeparator);
+    }
+
+    private String escapeVerticalBarRegexSpecialSymbol() {
+        return "\\|";
+    }
+
+    private boolean isVerticalSeparator(String customSeparator) {
+        return customSeparator.equals("|");
     }
 
     private double convertToDouble(String stringValue) {
