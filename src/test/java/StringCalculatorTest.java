@@ -110,7 +110,8 @@ public class StringCalculatorTest {
     static Stream<Arguments> shouldReturnExceptionWhenAtLeastOneNegativeNumberProvidedParameters() {
         return Stream.of(
                 Arguments.of((Object) new String[]{"-1,2", "Negative not allowed : -1"}),
-                Arguments.of((Object) new String[]{"2,-4,-5", "Negative not allowed : -4, -5"})
+                Arguments.of((Object) new String[]{"2,-4,-5", "Negative not allowed : -4, -5"}),
+                Arguments.of((Object) new String[]{"2,-4.1,-5", "Negative not allowed : -4.1, -5"})
         );
     }
 }

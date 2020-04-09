@@ -45,7 +45,7 @@ public class StringCalculator {
     }
 
     private String getNegativeNumbersExceptionMessage(double[] values) {
-        StringBuilder message = new StringBuilder("Negative not allowed : ");
+        StringBuilder message = new StringBuilder("Negative not allowed :");
         Collection<Double> negatives = new ArrayList<>();
 
         for (double value : values) {
@@ -56,9 +56,10 @@ public class StringCalculator {
         for(int i = 0; i < negatives.size(); i++) {
             double value = negatives.toArray(new Double[0])[i];
             if (i > 0) {
-                message.append(", ");
+                message.append(",");
             }
             if (isInteger(value)) {
+                message.append(" ");
                 message.append((int)value);
                 continue;
             }
