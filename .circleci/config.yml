@@ -21,7 +21,7 @@ jobs:
 
     steps:
       - checkout
-      - run: mvn -DrepoToken=${COVERALLS_REPO_TOKEN} cobertura:cobertura coveralls:report
+      - run: mvn clean test -DrepoToken=${COVERALLS_REPO_TOKEN} jacoco:report coveralls:report
 workflows:
   version: 2
   run_tests_for_katas:
