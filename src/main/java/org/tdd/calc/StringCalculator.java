@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class StringCalculator {
     public String add(String input) {
@@ -21,7 +22,7 @@ public class StringCalculator {
             errorMessages.add(getTwoSeparatorsExceptionMessage(customSeparator, input));
         }
 
-        Double[] values = convertToDoubles(splitInput(input, customSeparator));
+        Collection<Double> values = convertToDoubles(splitInput(input, customSeparator));
         if(containsNegativeNumbers(values)) {
             errorMessages.add(getNegativeNumbersExceptionMessage(values));
         }
@@ -37,31 +38,23 @@ public class StringCalculator {
     }
 
     private void verifySeparator(String input, ArrayList<String> errorMessages) {
-        if (commaSeparatorNextToNewLineSeparator(input)) {
-            errorMessages.add(getNumberExpectedExceptionMessage("\\n", input));
+        String[][] possibleSeparatorNextToEachOther = {
+                {",\n", "\\n"}, {"\n\n", "\\n"}, {"\n,", ","}, {",,", ","}
+        };
+
+        for (String[] separator : possibleSeparatorNextToEachOther) {
+            if (separatorsNextToEachOther(input, separator[0])) {
+                errorMessages.add(getNumberExpectedExceptionMessage(separator[1], input));
+            }
         }
-        if (newLineSeparatorsNextToEachOther(input)) {
-            errorMessages.add(getNumberExpectedExceptionMessage("\\n", input));
-        }
-        if (newLineSeparatorNextToCommaSeparator(input)) {
-            errorMessages.add(getNumberExpectedExceptionMessage(",", input));
-        }
-        if (commaSeparatorsNextToEachOther(input)) {
-            errorMessages.add(getNumberExpectedExceptionMessage(",", input));
-        }
+
         if (inputEndsWithSeparator(input)) {
             errorMessages.add("Number expected but EOF found");
         }
     }
 
-    private double getSumOfTheValues(Double[] values) {
-        double sum = 0;
-
-        for(double value : values) {
-            sum += value;
-        }
-
-        return sum;
+    private double getSumOfTheValues(Collection<Double> values) {
+        return values.stream().mapToDouble(Double::doubleValue).sum();
     }
 
     private String getFormattedErrorMessage(ArrayList<String> errorMessages) {
@@ -77,7 +70,7 @@ public class StringCalculator {
         return errorMessages.size() > 0;
     }
 
-    private Double[] convertToDoubles(String[] input) {
+    private Collection<Double> convertToDoubles(String[] input) {
         Collection<Double> numbers = new ArrayList<>();
         for (String stringValue : input) {
             if (stringValue.isEmpty()) { continue; }
@@ -88,17 +81,12 @@ public class StringCalculator {
                 // Skipped for now
             }
         }
-        return numbers.toArray(new Double[0]);
+        return numbers;
     }
 
-    private String getNegativeNumbersExceptionMessage(Double[] values) {
+    private String getNegativeNumbersExceptionMessage(Collection<Double> values) {
         StringBuilder message = new StringBuilder("Negative not allowed :");
-        Collection<Double> negatives = new ArrayList<>();
-
-        for (double value : values) {
-            if (value > 0) continue;
-            negatives.add(value);
-        }
+        Collection<Double> negatives = values.stream().filter(i -> i < 0).collect(Collectors.toList());
 
         for(int i = 0; i < negatives.size(); i++) {
             double value = negatives.toArray(new Double[0])[i];
@@ -117,12 +105,8 @@ public class StringCalculator {
         return message.toString();
     }
 
-    private boolean containsNegativeNumbers(Double[] values) {
-        for(double value : values) {
-            if (value < 0) { return true; }
-        }
-
-        return false;
+    private boolean containsNegativeNumbers(Collection<Double> values) {
+        return values.stream().anyMatch(value -> value < 0);
     }
 
     private String getSubstringIfCustomSeparatorPresent(String  input, String customSeparator) {
@@ -167,20 +151,8 @@ public class StringCalculator {
         return input.indexOf("\n");
     }
 
-    private boolean newLineSeparatorNextToCommaSeparator(String input) {
-        return  input.contains("\n,");
-    }
-
-    private boolean commaSeparatorNextToNewLineSeparator(String input) {
-        return input.contains(",\n");
-    }
-
-    private boolean commaSeparatorsNextToEachOther(String input) {
-        return input.contains(",,");
-    }
-
-    private boolean newLineSeparatorsNextToEachOther(String input) {
-        return input.contains("\n\n");
+    private boolean separatorsNextToEachOther(String input, String separators) {
+        return input.contains(separators);
     }
 
     private double convertToOneDecimalPlace(double sum) {
@@ -198,10 +170,8 @@ public class StringCalculator {
     private String[] splitInput(String input, String customSeparator) {
         if (customSeparator == null) {
             customSeparator = "[,\n]";
-        } else {
-            if (isVerticalSeparator(customSeparator)) {
-                customSeparator = escapeVerticalBarRegexSpecialSymbol();
-            }
+        } else if (isVerticalSeparator(customSeparator)) {
+            customSeparator = escapeVerticalBarRegexSpecialSymbol();
         }
 
         return input.split(customSeparator);
