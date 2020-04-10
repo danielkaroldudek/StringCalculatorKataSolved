@@ -1,18 +1,31 @@
 package org.tdd.calc;
 
 import org.apache.commons.lang3.StringUtils;
+import org.javatuples.Pair;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class StringCalculator {
     public String add(String input) {
-        if (input.isEmpty()) { return "0"; }
-        if (isSingleNumber(input)) { return input; }
+        Pair<Double, List<String>> adds = adds(input);
 
-        ArrayList<String> errorMessages = new ArrayList<>();
+        if(areAnyErrors(adds.getValue1())) {
+            return getFormattedErrorMessage(adds.getValue1());
+        }
+
+        if (isInteger(adds.getValue0())) { return String.valueOf(adds.getValue0().intValue()); }
+
+        return String.valueOf(convertToOneDecimalPlace(adds.getValue0()));
+    }
+
+    private Pair<Double, List<String>> adds(String input) {
+        if (input.isEmpty()) { return new Pair<>(0.0, new ArrayList<>()); }
+        if (isSingleNumber(input)) { return new Pair<>(Double.valueOf(input), new ArrayList<>()); }
+
+        List<String> errorMessages = new ArrayList<>();
 
         verifySeparator(input, errorMessages);
 
@@ -22,22 +35,20 @@ public class StringCalculator {
             errorMessages.add(getTwoSeparatorsExceptionMessage(customSeparator, input));
         }
 
-        Collection<Double> values = convertToDoubles(splitInput(input, customSeparator));
+        List<Double> values = convertToDoubles(splitInput(input, customSeparator));
         if(containsNegativeNumbers(values)) {
             errorMessages.add(getNegativeNumbersExceptionMessage(values));
         }
 
-        if(areAnyErrors(errorMessages)) {
-            return getFormattedErrorMessage(errorMessages);
+        if (errorMessages.isEmpty()) {
+            return new Pair<>(getSumOfTheValues(values), new ArrayList<>());
         }
 
-        double sum = getSumOfTheValues(values);
-        if (isInteger(sum)) { return String.valueOf((int)sum); }
 
-        return String.valueOf(convertToOneDecimalPlace(sum));
+        return new Pair<>(null, errorMessages);
     }
 
-    private void verifySeparator(String input, ArrayList<String> errorMessages) {
+    private void verifySeparator(String input, List<String> errorMessages) {
         String[][] possibleSeparatorNextToEachOther = {
                 {",\n", "\\n"}, {"\n\n", "\\n"}, {"\n,", ","}, {",,", ","}
         };
@@ -53,11 +64,11 @@ public class StringCalculator {
         }
     }
 
-    private double getSumOfTheValues(Collection<Double> values) {
+    private double getSumOfTheValues(List<Double> values) {
         return values.stream().mapToDouble(Double::doubleValue).sum();
     }
 
-    private String getFormattedErrorMessage(ArrayList<String> errorMessages) {
+    private String getFormattedErrorMessage(List<String> errorMessages) {
         StringBuilder errorMessage = new StringBuilder();
         for(int i = 0; i < errorMessages.size(); i++) {
             if(i > 0) { errorMessage.append("\\n"); }
@@ -66,12 +77,12 @@ public class StringCalculator {
         return errorMessage.toString();
     }
 
-    private boolean areAnyErrors(ArrayList<String> errorMessages) {
+    private boolean areAnyErrors(List<String> errorMessages) {
         return errorMessages.size() > 0;
     }
 
-    private Collection<Double> convertToDoubles(String[] input) {
-        Collection<Double> numbers = new ArrayList<>();
+    private List<Double> convertToDoubles(String[] input) {
+        List<Double> numbers = new ArrayList<>();
         for (String stringValue : input) {
             if (stringValue.isEmpty()) { continue; }
             try {
@@ -84,9 +95,9 @@ public class StringCalculator {
         return numbers;
     }
 
-    private String getNegativeNumbersExceptionMessage(Collection<Double> values) {
+    private String getNegativeNumbersExceptionMessage(List<Double> values) {
         StringBuilder message = new StringBuilder("Negative not allowed :");
-        Collection<Double> negatives = values.stream().filter(i -> i < 0).collect(Collectors.toList());
+        List<Double> negatives = values.stream().filter(i -> i < 0).collect(Collectors.toList());
 
         for(int i = 0; i < negatives.size(); i++) {
             double value = negatives.toArray(new Double[0])[i];
@@ -105,7 +116,7 @@ public class StringCalculator {
         return message.toString();
     }
 
-    private boolean containsNegativeNumbers(Collection<Double> values) {
+    private boolean containsNegativeNumbers(List<Double> values) {
         return values.stream().anyMatch(value -> value < 0);
     }
 
@@ -159,7 +170,7 @@ public class StringCalculator {
         return Math.round(sum * 10) / 10.0;
     }
 
-    private boolean isInteger(double sum) {
+    private boolean isInteger(Double sum) {
         return sum % 1 == 0;
     }
 
