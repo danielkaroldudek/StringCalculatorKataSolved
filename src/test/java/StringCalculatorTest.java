@@ -114,4 +114,17 @@ public class StringCalculatorTest {
                 Arguments.of((Object) new String[]{"2,-4.1,-5", "Negative not allowed : -4.1, -5"})
         );
     }
+
+    @ParameterizedTest
+    @MethodSource("shouldReturnMultipleExceptionsWhenMultipleErrorsFoundParameters")
+    void shouldReturnMultipleExceptionsWhenMultipleErrorsFound(String[] input) {
+        assertThat(sut.add(input[0])).isEqualTo(input[1]);
+    }
+
+    static Stream<Arguments> shouldReturnMultipleExceptionsWhenMultipleErrorsFoundParameters() {
+        return Stream.of(
+                Arguments.of((Object) new String[]{"-1,,2", "Number expected but ',' found at position 2\\nNegative not allowed : -1"}),
+                Arguments.of((Object) new String[]{"-1\n\n2", "Number expected but '\\n' found at position 2\\nNegative not allowed : -1"})
+        );
+    }
 }
