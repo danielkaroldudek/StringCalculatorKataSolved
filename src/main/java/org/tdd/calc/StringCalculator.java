@@ -28,10 +28,9 @@ public class StringCalculator {
         Validator validator = new InputValidator(input, separator, messages, inputManipulation);
         Pair<Boolean, List<Error>> validatedInput = validator.isValid();
 
-        List<Double> values;
-        List<String> errorMessages = new ArrayList<>();
-
         if (!validatedInput.getValue0()) {
+            List<String> errorMessages = new ArrayList<>();
+
             for (Error error : validatedInput.getValue1()) {
                 switch (error.getErrorType()) {
                     case EMPTY_INPUT:
@@ -43,14 +42,11 @@ public class StringCalculator {
                         break;
                 }
             }
-        }
 
-        values = converter.convertToDoubles(inputManipulation.splitInput(separator.getValue()));
-
-        if (!validatedInput.getValue0()) {
             return messages.getFormattedErrorMessage(errorMessages);
         }
 
+        List<Double>values = converter.convertToDoubles(inputManipulation.splitInput(separator.getValue()));
         double result = add(values);
         if (isInteger(result)) {
             return String.valueOf((int)result);
