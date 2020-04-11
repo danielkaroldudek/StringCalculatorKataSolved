@@ -1,18 +1,15 @@
 package org.tdd.calc.messaging;
 
-import org.tdd.calc.manipulation.StringManipulation;
-import org.tdd.calc.validation.Verifications;
+import org.tdd.calc.manipulation.InputManipulation;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Messages {
-    private final Verifications verifications;
-    private final StringManipulation stringManipulation;
+    private final InputManipulation inputManipulation;
 
-    public Messages() {
-        verifications = new Verifications();
-        stringManipulation = new StringManipulation();
+    public Messages(InputManipulation inputManipulation) {
+        this.inputManipulation = inputManipulation;
     }
 
     public String getFormattedErrorMessage(List<String> errorMessages) {
@@ -24,37 +21,33 @@ public class Messages {
         return errorMessage.toString();
     }
 
-    public String getNegativeNumbersExceptionMessage(List<Double> values) {
+    public String getNegativeNumbersExceptionMessage(List<String> values) {
         StringBuilder message = new StringBuilder("Negative not allowed :");
-        List<Double> negatives = values.stream().filter(i -> i < 0).collect(Collectors.toList());
+        List<String> negatives = values.stream().filter(i -> i.startsWith("-")).collect(Collectors.toList());
 
-        for(int i = 0; i < negatives.size(); i++) {
-            double value = negatives.toArray(new Double[0])[i];
-            if (i > 0) {
+        int iterator = 0;
+        for(String value : negatives) {
+            if (iterator > 0) {
                 message.append(",");
-            }
-            if (verifications.isInteger(value)) {
-                message.append(" ");
-                message.append((int)value);
-                continue;
             }
             message.append(" ");
             message.append(value);
+            iterator++;
         }
 
         return message.toString();
     }
 
-    public String getTwoSeparatorsException(String customSeparator, String input) {
+    public String getTwoSeparatorsException(String customSeparator) {
         return "'" + customSeparator +
                 "' expected but ',' found at position " +
-                stringManipulation.indexOfCommaSeparator(input);
+                inputManipulation.indexOf(",");
     }
 
-    public String getNumberExpectedException(String separator, String input) {
+    public String getNumberExpectedException(String separator) {
         int index = separator.equals(",")
-                ? stringManipulation.indexOfCommaSeparator(input)
-                : stringManipulation.indexOfNewLineSeparator(input);
+                ? inputManipulation.indexOf(",")
+                : inputManipulation.indexOf("\n");
         return "Number expected but '" +
                 separator +
                 "' found at position " +

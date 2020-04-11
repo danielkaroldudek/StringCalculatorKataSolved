@@ -2,7 +2,7 @@ package org.tdd.calc;
 
 import org.javatuples.Pair;
 import org.tdd.calc.conversion.Converter;
-import org.tdd.calc.manipulation.StringManipulation;
+import org.tdd.calc.manipulation.InputManipulation;
 import org.tdd.calc.messaging.Messages;
 import org.tdd.calc.validation.*;
 import org.tdd.calc.validation.Error;
@@ -11,24 +11,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StringCalculator {
-    private final Messages messages;
-    private final Verifications verifications;
-    private final StringManipulation stringManipulation;
     private final Converter converter;
 
     public StringCalculator() {
-        messages = new Messages();
-        verifications = new Verifications();
-        stringManipulation = new StringManipulation();
         converter = new Converter();
     }
 
     public String add(String input) {
-        Validator validator = new InputValidator(input, messages);
+        InputManipulation inputManipulation = new InputManipulation(input);
+        Separator separator = inputManipulation.getSeparator();
+        if (separator.isCustom()) {
+            input = inputManipulation.removeSeparatorFromInput();
+        }
+
+        Messages messages = new Messages(inputManipulation);
+        Validator validator = new InputValidator(input, separator, messages, inputManipulation);
         Pair<Boolean, List<Error>> validatedInput = validator.isValid();
 
         List<Double> values;
-        String customSeparator;
         List<String> errorMessages = new ArrayList<>();
 
         if (!validatedInput.getValue0()) {
@@ -45,23 +45,14 @@ public class StringCalculator {
             }
         }
 
-        customSeparator = stringManipulation.getCustomSeparator(input);
-        input = stringManipulation.getSubstringIfCustomSeparatorPresent(input, customSeparator);
-        if (verifications.hasMultipleSeparators(customSeparator, input)) {
-            errorMessages.add(messages.getTwoSeparatorsException(customSeparator, input));
-        }
+        values = converter.convertToDoubles(inputManipulation.splitInput(separator.getValue()));
 
-        values = converter.convertToDoubles(stringManipulation.splitInput(input, customSeparator));
-        if(verifications.containsNegativeNumbers(values)) {
-            errorMessages.add(messages.getNegativeNumbersExceptionMessage(values));
-        }
-
-        if (errorMessages.size() > 0) {
+        if (!validatedInput.getValue0()) {
             return messages.getFormattedErrorMessage(errorMessages);
         }
 
         double result = add(values);
-        if (verifications.isInteger(result)) {
+        if (isInteger(result)) {
             return String.valueOf((int)result);
         }
 
@@ -70,5 +61,9 @@ public class StringCalculator {
 
     private double add(List<Double> values) {
         return values.stream().mapToDouble(Double::doubleValue).sum();
+    }
+
+    public boolean isInteger(Double sum) {
+        return sum % 1 == 0;
     }
 }
