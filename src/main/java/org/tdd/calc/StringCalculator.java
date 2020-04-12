@@ -3,7 +3,7 @@ package org.tdd.calc;
 import org.javatuples.Pair;
 import org.tdd.calc.conversion.Converter;
 import org.tdd.calc.manipulation.InputManipulation;
-import org.tdd.calc.messaging.Messages;
+import org.tdd.calc.messaging.ErrorMessages;
 import org.tdd.calc.validation.*;
 import org.tdd.calc.validation.Error;
 
@@ -12,9 +12,11 @@ import java.util.List;
 
 public class StringCalculator {
     private final Converter converter;
+    private final ErrorMessages errorMessages;
 
     public StringCalculator() {
         converter = new Converter();
+        errorMessages = new ErrorMessages();
     }
 
     public String add(String input) {
@@ -24,8 +26,7 @@ public class StringCalculator {
             input = inputManipulation.removeSeparatorFromInput();
         }
 
-        Messages messages = new Messages(inputManipulation);
-        Validator validator = new InputValidator(input, separator, messages, inputManipulation);
+        Validator validator = new InputValidator(input, separator, errorMessages, inputManipulation);
         Pair<Boolean, List<Error>> validatedInput = validator.isValid();
 
         if (!validatedInput.getValue0()) {
@@ -43,7 +44,7 @@ public class StringCalculator {
                 }
             }
 
-            return messages.getFormattedErrorMessage(errorMessages);
+            return this.errorMessages.getFormattedMessage(errorMessages);
         }
 
         List<Double>values = converter.convertToDoubles(inputManipulation.splitInput(separator.getValue()));

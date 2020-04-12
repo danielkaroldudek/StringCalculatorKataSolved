@@ -1,9 +1,10 @@
 package org.tdd.calc.validation;
 
 import org.javatuples.Pair;
+import org.javatuples.Triplet;
 import org.tdd.calc.Separator;
 import org.tdd.calc.manipulation.InputManipulation;
-import org.tdd.calc.messaging.Messages;
+import org.tdd.calc.messaging.ErrorMessages;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,15 +14,15 @@ import java.util.stream.Collectors;
 
 public class InputValidator implements Validator {
     private final String input;
-    private final Messages messages;
+    private final ErrorMessages errorMessages;
     private final Separator separator;
     private final InputManipulation inputManipulation;
 
     private List<Error> errors;
 
-    public InputValidator(String input, Separator separator, Messages messages, InputManipulation inputManipulation) {
+    public InputValidator(String input, Separator separator, ErrorMessages errorMessages, InputManipulation inputManipulation) {
         this.input = input;
-        this.messages = messages;
+        this.errorMessages = errorMessages;
         this.separator = separator;
         this.inputManipulation = inputManipulation;
 
@@ -41,7 +42,7 @@ public class InputValidator implements Validator {
 
     private void isEmpty() {
         if(input.isEmpty()) {
-            errors.add(new Error(ErrorTypes.EMPTY_INPUT, messages.getEmptyInput()));
+            errors.add(new Error(ErrorTypes.EMPTY_INPUT, errorMessages.getEmptyInput()));
         }
     }
 
@@ -49,38 +50,42 @@ public class InputValidator implements Validator {
         List<String> negativeValues = Arrays.stream(inputManipulation.splitInput(separator.getValue())).filter(value -> value.startsWith("-")).collect(Collectors.toList());
         if(negativeValues.size() > 0) {
             errors.add(new Error(ErrorTypes.NEGATIVE_NUMBERS,
-                    messages.getNegativeNumbersExceptionMessage(negativeValues)));
+                    errorMessages.getNegativeNumbersExceptionMessage(negativeValues)));
         }
     }
 
     private void hasMultipleSeparators() {
-        if(separator.isCustom() && Pattern.compile("[,\n]").matcher(input).find()) {
-            errors.add(new Error(ErrorTypes.MULTIPLE_SEPARATORS,
-                    messages.getTwoSeparatorsException(separator.getValue())));
-        }
+        List<String> defaultSeparators = Arrays.asList(",", "\n");
+        defaultSeparators.forEach(defaultSeparator -> {
+            if(separator.isCustom() && Pattern.compile(defaultSeparator).matcher(input).find()) {
+                errors.add(new Error(ErrorTypes.MULTIPLE_SEPARATORS,
+                        errorMessages.getTwoSeparatorsException(separator.getValue(), defaultSeparator, inputManipulation.indexOf(defaultSeparator))));
+            }
+        });
     }
 
     private void isSingleNumber() {
         if (input.length() == 1) {
-            errors.add(new Error(ErrorTypes.SINGLE_NUMBER, messages.getSingleNumber()));
+            errors.add(new Error(ErrorTypes.SINGLE_NUMBER, errorMessages.getSingleNumber()));
         }
     }
 
     private void separatorsNextToEachOther() {
-        List<Pair<String, String>> possibleSeparatorNextToEachOther = Arrays.asList(
-          new Pair<>(",\n", "\\n"), new Pair<>("\n\n", "\\n"), new Pair<>("\n,", ","), new Pair<>(",,", ",")
+        List<Triplet<String, String, String>> possibleSeparatorNextToEachOther = Arrays.asList(
+          new Triplet<>(",\n", "\n", "\\n"), new Triplet<>("\n\n", "\n", "\\n"), new Triplet<>("\n,", ",", ","), new Triplet<>(",,", ",", ",")
         );
 
         possibleSeparatorNextToEachOther.forEach(separator -> {
             if (input.contains(separator.getValue0())) {
-                errors.add(new Error(ErrorTypes.NUMBER_EXPECTED, messages.getNumberExpectedException(separator.getValue1())));
+                errors.add(new Error(ErrorTypes.NUMBER_EXPECTED,
+                        errorMessages.getNumberExpectedException(separator.getValue2(), inputManipulation.indexOf(separator.getValue1()))));
             }
         });
     }
 
     private void endsWithSeparator() {
         if (Pattern.compile("[,\n]$").matcher(input).find()) {
-            errors.add(new Error(ErrorTypes.ENDS_WITH_SEPARATOR, messages.getEndsWithSeparator()));
+            errors.add(new Error(ErrorTypes.ENDS_WITH_SEPARATOR, errorMessages.getEndsWithSeparator()));
         }
     }
 }
