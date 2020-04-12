@@ -3,10 +3,10 @@ package org.tdd.calc.manipulation;
 import org.apache.commons.lang3.StringUtils;
 import org.tdd.calc.Separator;
 
-public class InputManipulation {
+public class InputManipulator {
     private String input;
 
-    public InputManipulation (String input) {
+    public InputManipulator(String input) {
         this.input = input;
     }
 
@@ -19,16 +19,10 @@ public class InputManipulation {
     }
 
     public Separator getSeparator() {
-        Separator separator = new Separator();
         String customSeparator = StringUtils.substringBetween(input, "//", "\n");
-        if (customSeparator == null) {
-            separator.setValue("[,\n]");
-        } else {
-            separator.setValue(customSeparator);
-            separator.setCustom();
-        }
-
-        return separator;
+        return customSeparator == null
+                ? new Separator("[,\n]", false)
+                : new Separator(customSeparator, true);
     }
 
     public String removeSeparatorFromInput() {

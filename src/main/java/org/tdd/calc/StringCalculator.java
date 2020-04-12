@@ -2,7 +2,7 @@ package org.tdd.calc;
 
 import org.javatuples.Pair;
 import org.tdd.calc.conversion.Converter;
-import org.tdd.calc.manipulation.InputManipulation;
+import org.tdd.calc.manipulation.InputManipulator;
 import org.tdd.calc.messaging.ErrorMessages;
 import org.tdd.calc.validation.*;
 import org.tdd.calc.validation.Error;
@@ -20,13 +20,14 @@ public class StringCalculator {
     }
 
     public String add(String input) {
-        InputManipulation inputManipulation = new InputManipulation(input);
-        Separator separator = inputManipulation.getSeparator();
+        InputManipulator inputManipulator = new InputManipulator(input);
+        Separator separator = inputManipulator.getSeparator();
+
         if (separator.isCustom()) {
-            input = inputManipulation.removeSeparatorFromInput();
+            input = inputManipulator.removeSeparatorFromInput();
         }
 
-        Validator validator = new InputValidator(input, separator, errorMessages, inputManipulation);
+        Validator validator = new InputValidator(input, separator, errorMessages, inputManipulator);
         Pair<Boolean, List<Error>> validatedInput = validator.isValid();
 
         if (!validatedInput.getValue0()) {
@@ -47,17 +48,14 @@ public class StringCalculator {
             return this.errorMessages.getFormattedMessage(errorMessages);
         }
 
-        List<Double>values = converter.convertToDoubles(inputManipulation.splitInput(separator.getValue()));
-        double result = add(values);
-        if (isInteger(result)) {
-            return String.valueOf((int)result);
-        }
-
-        return String.valueOf(converter.convertToOneDecimalPlace(result));
+        double result = add(converter.convertToDoubles(inputManipulator.splitInput(separator.get())));
+        return isInteger(result)
+                ? String.valueOf((int)result)
+                : String.valueOf(result);
     }
 
     private double add(List<Double> values) {
-        return values.stream().mapToDouble(Double::doubleValue).sum();
+        return converter.convertToOneDecimalPlace(values.stream().mapToDouble(Double::doubleValue).sum());
     }
 
     public boolean isInteger(Double sum) {

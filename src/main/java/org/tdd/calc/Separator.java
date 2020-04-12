@@ -4,16 +4,13 @@ public class Separator {
     private String value;
     private boolean custom;
 
-    public void setValue(String value) {
+    public Separator(String value, boolean custom) {
         this.value = value;
+        this.custom = custom;
     }
 
-    public String getValue() {
+    public String get() {
         return value;
-    }
-
-    public void setCustom() {
-        this.custom = true;
     }
 
     public boolean isCustom() {

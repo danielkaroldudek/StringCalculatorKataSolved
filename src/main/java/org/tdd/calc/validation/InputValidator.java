@@ -3,7 +3,7 @@ package org.tdd.calc.validation;
 import org.javatuples.Pair;
 import org.javatuples.Triplet;
 import org.tdd.calc.Separator;
-import org.tdd.calc.manipulation.InputManipulation;
+import org.tdd.calc.manipulation.InputManipulator;
 import org.tdd.calc.messaging.ErrorMessages;
 
 import java.util.ArrayList;
@@ -16,15 +16,15 @@ public class InputValidator implements Validator {
     private final String input;
     private final ErrorMessages errorMessages;
     private final Separator separator;
-    private final InputManipulation inputManipulation;
+    private final InputManipulator inputManipulator;
 
     private List<Error> errors;
 
-    public InputValidator(String input, Separator separator, ErrorMessages errorMessages, InputManipulation inputManipulation) {
+    public InputValidator(String input, Separator separator, ErrorMessages errorMessages, InputManipulator inputManipulator) {
         this.input = input;
         this.errorMessages = errorMessages;
         this.separator = separator;
-        this.inputManipulation = inputManipulation;
+        this.inputManipulator = inputManipulator;
 
         errors = new ArrayList<>();
     }
@@ -47,7 +47,7 @@ public class InputValidator implements Validator {
     }
 
     private void containsNegativeNumbers() {
-        List<String> negativeValues = Arrays.stream(inputManipulation.splitInput(separator.getValue())).filter(value -> value.startsWith("-")).collect(Collectors.toList());
+        List<String> negativeValues = Arrays.stream(inputManipulator.splitInput(separator.get())).filter(value -> value.startsWith("-")).collect(Collectors.toList());
         if(negativeValues.size() > 0) {
             errors.add(new Error(ErrorTypes.NEGATIVE_NUMBERS,
                     errorMessages.getNegativeNumbersExceptionMessage(negativeValues)));
@@ -59,7 +59,7 @@ public class InputValidator implements Validator {
         defaultSeparators.forEach(defaultSeparator -> {
             if(separator.isCustom() && Pattern.compile(defaultSeparator).matcher(input).find()) {
                 errors.add(new Error(ErrorTypes.MULTIPLE_SEPARATORS,
-                        errorMessages.getTwoSeparatorsException(separator.getValue(), defaultSeparator, inputManipulation.indexOf(defaultSeparator))));
+                        errorMessages.getTwoSeparatorsException(separator.get(), defaultSeparator, inputManipulator.indexOf(defaultSeparator))));
             }
         });
     }
@@ -78,7 +78,7 @@ public class InputValidator implements Validator {
         possibleSeparatorNextToEachOther.forEach(separator -> {
             if (input.contains(separator.getValue0())) {
                 errors.add(new Error(ErrorTypes.NUMBER_EXPECTED,
-                        errorMessages.getNumberExpectedException(separator.getValue2(), inputManipulation.indexOf(separator.getValue1()))));
+                        errorMessages.getNumberExpectedException(separator.getValue2(), inputManipulator.indexOf(separator.getValue1()))));
             }
         });
     }

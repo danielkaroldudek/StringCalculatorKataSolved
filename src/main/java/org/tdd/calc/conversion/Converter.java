@@ -1,18 +1,18 @@
 package org.tdd.calc.conversion;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Converter {
     public List<Double> convertToDoubles(String[] input) {
-        List<Double> numbers = new ArrayList<>();
-        for (String stringValue : input) {
-            if (Pattern.compile("[0-9]|[0-9].[0-9]").matcher(stringValue).find()) {
-                numbers.add(Double.parseDouble(stringValue));
-            }
-        }
-        return numbers;
+        Predicate<String> isDoublePredicate = value -> Pattern.compile("[0-9]|[0-9].[0-9]").matcher(value).find();
+        return Arrays.stream(input)
+                .filter(isDoublePredicate)
+                .map(Double::parseDouble)
+                .collect(Collectors.toList());
     }
 
     public double convertToOneDecimalPlace(double sum) {
