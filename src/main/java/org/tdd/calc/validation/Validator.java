@@ -1,9 +1,10 @@
 package org.tdd.calc.validation;
 
-import org.javatuples.Pair;
+import org.tdd.calc.validation.errors.Error;
 
 import java.util.List;
 
 public interface Validator {
-    Pair<Boolean, List<Error>> isValid();
+    boolean isValid();
+    List<Error> getErrors();
 }

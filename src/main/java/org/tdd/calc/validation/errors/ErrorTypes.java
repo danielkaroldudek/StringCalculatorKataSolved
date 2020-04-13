@@ -1,4 +1,4 @@
-package org.tdd.calc.validation;
+package org.tdd.calc.validation.errors;
 
 public enum ErrorTypes {
     EMPTY_INPUT,
