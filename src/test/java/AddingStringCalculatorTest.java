@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class StringCalculatorTest {
+public class AddingStringCalculatorTest {
     private StringCalculator sut;
 
     @BeforeEach
