@@ -2,7 +2,7 @@ version: 2
 jobs:
   collect_cobertura_data_and_send_to_coveralls:
     docker:
-      - image: circleci/openjdk:8-jdk
+      - image: circleci/openjdk:9-jdk
 
     environment:
       JVM_OPTS: -Xmx3200m
