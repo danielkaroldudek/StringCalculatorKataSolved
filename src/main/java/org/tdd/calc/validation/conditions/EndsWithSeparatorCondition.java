@@ -1,6 +1,6 @@
 package org.tdd.calc.validation.conditions;
 
-import org.tdd.calc.messaging.ErrorMessages;
+import org.tdd.calc.messaging.IErrorMessages;
 import org.tdd.calc.validation.errors.Error;
 import org.tdd.calc.validation.errors.ErrorTypes;
 
@@ -9,9 +9,9 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class EndsWithSeparatorCondition implements InputValidationCondition {
-    private final ErrorMessages errorMessages;
+    private final IErrorMessages errorMessages;
 
-    public EndsWithSeparatorCondition(ErrorMessages errorMessages) {
+    public EndsWithSeparatorCondition(IErrorMessages errorMessages) {
         this.errorMessages = errorMessages;
     }
 

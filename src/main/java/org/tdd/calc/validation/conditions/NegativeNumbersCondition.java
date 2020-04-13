@@ -1,8 +1,8 @@
 package org.tdd.calc.validation.conditions;
 
 import org.tdd.calc.Separator;
-import org.tdd.calc.manipulation.StringManipulator;
-import org.tdd.calc.messaging.ErrorMessages;
+import org.tdd.calc.manipulation.IStringManipulator;
+import org.tdd.calc.messaging.IErrorMessages;
 import org.tdd.calc.validation.errors.Error;
 import org.tdd.calc.validation.errors.ErrorTypes;
 
@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
 
 public class NegativeNumbersCondition implements InputValidationCondition {
     private final Separator separator;
-    private final StringManipulator stringManipulator;
-    private final ErrorMessages errorMessages;
+    private final IStringManipulator stringManipulator;
+    private final IErrorMessages errorMessages;
 
-    public NegativeNumbersCondition(Separator separator, StringManipulator stringManipulator, ErrorMessages errorMessages) {
+    public NegativeNumbersCondition(Separator separator, IStringManipulator stringManipulator, IErrorMessages errorMessages) {
         this.stringManipulator = stringManipulator;
         this.separator = separator;
         this.errorMessages = errorMessages;

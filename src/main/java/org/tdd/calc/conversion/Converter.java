@@ -5,7 +5,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class Converter {
+public class Converter implements IConverter  {
     public List<Double> convertToDoubles(List<String> input) {
         Predicate<String> isDoublePredicate = value -> Pattern.compile("[0-9]|[0-9].[0-9]").matcher(value).find();
         return input.stream()

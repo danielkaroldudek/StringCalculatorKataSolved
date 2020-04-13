@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class StringManipulator {
+public class StringManipulator implements IStringManipulator {
     public int indexOf(String input, String value) {
         return input.indexOf(value);
     }

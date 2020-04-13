@@ -4,6 +4,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.tdd.calc.StringCalculator;
+import org.tdd.calc.conversion.Converter;
+import org.tdd.calc.conversion.IConverter;
+import org.tdd.calc.manipulation.IStringManipulator;
+import org.tdd.calc.manipulation.StringManipulator;
+import org.tdd.calc.messaging.ErrorMessages;
+import org.tdd.calc.messaging.IErrorMessages;
 
 import java.util.stream.Stream;
 
@@ -14,7 +20,12 @@ public class AddingStringCalculatorTest {
 
     @BeforeEach
     public void init() {
-        sut = new StringCalculator();
+        //TODO: Use mocking framework in the feature
+        IConverter converter = new Converter();
+        IErrorMessages errorMessages = new ErrorMessages();
+        IStringManipulator stringManipulator = new StringManipulator();
+
+        sut = new StringCalculator(converter, errorMessages, stringManipulator);
     }
 
     @Test

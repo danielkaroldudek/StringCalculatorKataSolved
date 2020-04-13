@@ -3,7 +3,7 @@ package org.tdd.calc.messaging;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ErrorMessages extends Messages {
+public class ErrorMessages extends Messages implements IErrorMessages {
     public String getNegativeNumbersExceptionMessage(List<String> values) {
         String negatives = values.stream().filter(i -> i.startsWith("-")).collect(Collectors.joining(", "));
         return String.format("Negative not allowed : %s", negatives);

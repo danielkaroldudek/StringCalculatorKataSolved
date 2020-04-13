@@ -1,6 +1,6 @@
 package org.tdd.calc.validation.conditions;
 
-import org.tdd.calc.messaging.ErrorMessages;
+import org.tdd.calc.messaging.IErrorMessages;
 import org.tdd.calc.validation.errors.Error;
 import org.tdd.calc.validation.errors.ErrorTypes;
 
@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class EmptyInputValidationCondition implements InputValidationCondition {
-    private final ErrorMessages errorMessages;
+    private final IErrorMessages errorMessages;
 
-    public EmptyInputValidationCondition(ErrorMessages errorMessages) {
+    public EmptyInputValidationCondition(IErrorMessages errorMessages) {
         this.errorMessages = errorMessages;
     }
 

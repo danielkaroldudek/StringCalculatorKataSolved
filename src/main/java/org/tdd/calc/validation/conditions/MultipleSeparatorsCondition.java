@@ -1,8 +1,8 @@
 package org.tdd.calc.validation.conditions;
 
 import org.tdd.calc.Separator;
-import org.tdd.calc.manipulation.StringManipulator;
-import org.tdd.calc.messaging.ErrorMessages;
+import org.tdd.calc.manipulation.IStringManipulator;
+import org.tdd.calc.messaging.IErrorMessages;
 import org.tdd.calc.validation.errors.Error;
 import org.tdd.calc.validation.errors.ErrorTypes;
 
@@ -13,10 +13,10 @@ import java.util.regex.Pattern;
 
 public class MultipleSeparatorsCondition implements InputValidationCondition {
     private final Separator separator;
-    private final StringManipulator stringManipulator;
-    private final ErrorMessages errorMessages;
+    private final IStringManipulator stringManipulator;
+    private final IErrorMessages errorMessages;
 
-    public MultipleSeparatorsCondition(Separator separator, StringManipulator stringManipulator, ErrorMessages errorMessages) {
+    public MultipleSeparatorsCondition(Separator separator, IStringManipulator stringManipulator, IErrorMessages errorMessages) {
         this.separator = separator;
         this.stringManipulator = stringManipulator;
         this.errorMessages = errorMessages;

@@ -1,13 +1,13 @@
 package org.tdd.calc;
 
-import org.tdd.calc.conversion.Converter;
+import org.tdd.calc.conversion.IConverter;
 
 import java.util.List;
 
 public class Adder implements Calculator {
-    private final Converter converter;
+    private final IConverter converter;
 
-    public Adder(Converter converter) {
+    public Adder(IConverter converter) {
         this.converter = converter;
     }
 

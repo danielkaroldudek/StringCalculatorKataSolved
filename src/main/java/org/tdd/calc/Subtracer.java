@@ -1,14 +1,14 @@
 package org.tdd.calc;
 
-import org.tdd.calc.conversion.Converter;
+import org.tdd.calc.conversion.IConverter;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Subtracer implements Calculator {
-    private final Converter converter;
+    private final IConverter converter;
 
-    public Subtracer(Converter converter) {
+    public Subtracer(IConverter converter) {
         this.converter = converter;
     }
 
