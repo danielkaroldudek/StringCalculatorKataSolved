@@ -12,8 +12,7 @@ jobs:
       - checkout
       - run:
           name: "Run unit tests and send the report to coveralls"
-          command: mvn -Drepo_token=$COVERALLS_REPO_TOKEN clean test jacoco:report
-#            coveralls:report
+          command: mvn -Drepo_token=$COVERALLS_REPO_TOKEN clean test jacoco:report coveralls:report
 
 workflows:
   version: 2
