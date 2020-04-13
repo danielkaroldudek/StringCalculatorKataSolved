@@ -67,7 +67,7 @@ public class StringCalculator {
                 calculator = new Adder(converter);
                 break;
             case SUBTRACKING:
-                calculator = new Subtracer();
+                calculator = new Subtracer(converter);
                 break;
             default:
                 throw new NotImplementedException("Method " + operationType + " not implemented");
