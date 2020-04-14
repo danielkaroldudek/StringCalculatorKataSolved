@@ -3,6 +3,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.tdd.calc.IStringCalculator;
 import org.tdd.calc.StringCalculator;
 import org.tdd.calc.conversion.Converter;
 import org.tdd.calc.conversion.IConverter;
@@ -10,13 +11,14 @@ import org.tdd.calc.manipulation.IStringManipulator;
 import org.tdd.calc.manipulation.StringManipulator;
 import org.tdd.calc.messaging.ErrorMessages;
 import org.tdd.calc.messaging.IErrorMessages;
+import org.tdd.calc.validation.StringCalculatorValidation;
 
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SubtractingStringCalculatorTest {
-    private StringCalculator sut;
+    private IStringCalculator sut;
 
     @BeforeEach
     public void init() {
@@ -25,7 +27,7 @@ public class SubtractingStringCalculatorTest {
         IErrorMessages errorMessages = new ErrorMessages();
         IStringManipulator stringManipulator = new StringManipulator();
 
-        sut = new StringCalculator(converter, errorMessages, stringManipulator);
+        sut = new StringCalculatorValidation(new StringCalculator(converter, stringManipulator), stringManipulator, errorMessages);
     }
 
     @Test
@@ -39,22 +41,22 @@ public class SubtractingStringCalculatorTest {
     }
 
     @Test
-    public void shouldReturnSumOfTwoNumbersWhenSeparatedByComma() {
+    public void shouldReturnSubOfTwoNumbersWhenSeparatedByComma() {
         assertThat(sut.sub("1,2")).isEqualTo("-1");
     }
 
     @Test
-    public void shouldReturnSumOfTwoDoubleNumbersWhenSeparatedByComma() {
+    public void shouldReturnSubOfTwoDoubleNumbersWhenSeparatedByComma() {
         assertThat(sut.sub("1.1,1.2")).isEqualTo("-0.1");
     }
 
     @Test
-    public void shouldReturnSumOfMultipleNumbersWhenSeparatedByComma() {
+    public void shouldReturnSubOfMultipleNumbersWhenSeparatedByComma() {
         assertThat(sut.sub("1,2.2,3,4.4,5")).isEqualTo("-13.6");
     }
 
     @Test
-    public void shouldReturnSumOfNumbersWhenSeparatedByCommaAndNewLine() {
+    public void shouldReturnSubOfNumbersWhenSeparatedByCommaAndNewLine() {
         assertThat(sut.sub("1\n2,3")).isEqualTo("-4");
     }
 
@@ -93,12 +95,12 @@ public class SubtractingStringCalculatorTest {
     }
 
     @ParameterizedTest
-    @MethodSource("shouldReturnSumWhenSeparatedByCustomSeparatorParameters")
-    public void shouldReturnSumWhenSeparatedByCustomSeparator(String[] input) {
+    @MethodSource("shouldReturnSubWhenSeparatedByCustomSeparatorParameters")
+    public void shouldReturnSubWhenSeparatedByCustomSeparator(String[] input) {
         assertThat(sut.sub(input[0])).isEqualTo(input[1]);
     }
 
-    static Stream<Arguments> shouldReturnSumWhenSeparatedByCustomSeparatorParameters() {
+    static Stream<Arguments> shouldReturnSubWhenSeparatedByCustomSeparatorParameters() {
         return Stream.of(
                 Arguments.of((Object) new String[]{"//;\n1;2", "-1"}),
                 Arguments.of((Object) new String[]{"//|\n1|2|3", "-4"}),
