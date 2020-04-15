@@ -1,9 +1,9 @@
 package org.tdd.calc;
 
 public abstract class StringCalculatorDecorator implements IStringCalculator {
-    protected final IStringCalculator stringCalculator;
+    private final IStringCalculator stringCalculator;
 
-    protected StringCalculatorDecorator(IStringCalculator stringCalculator) {
+    public StringCalculatorDecorator(IStringCalculator stringCalculator) {
         this.stringCalculator = stringCalculator;
     }
 

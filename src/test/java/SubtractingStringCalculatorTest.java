@@ -24,7 +24,8 @@ public class SubtractingStringCalculatorTest {
 
     @BeforeEach
     public void init() {
-        //TODO: Use mocking framework in the feature
+        //TODO: Move to BDD as integration tests between classes.
+        //Other classes should have independent Unit Tests with mocking framework to isolate and test the classes.
         IConverter converter = new Converter();
         IErrorMessages errorMessages = new ErrorMessages();
         IStringManipulator stringManipulator = new StringManipulator();
