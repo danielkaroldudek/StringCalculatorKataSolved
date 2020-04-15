@@ -14,11 +14,14 @@ import java.util.Optional;
 public class StringCalculatorValidation extends StringCalculatorDecorator {
     private final IStringManipulator stringManipulator;
     private final IErrorMessages errorMessages;
+    private final IInputValidatorFactory inputValidatorFactory;
 
-    public StringCalculatorValidation(IStringCalculator stringCalculator, IStringManipulator stringManipulator, IErrorMessages errorMessages) {
+    public StringCalculatorValidation(IStringCalculator stringCalculator, IStringManipulator stringManipulator,
+                                      IErrorMessages errorMessages, IInputValidatorFactory inputValidatorFactory) {
         super(stringCalculator);
         this.stringManipulator = stringManipulator;
         this.errorMessages = errorMessages;
+        this.inputValidatorFactory = inputValidatorFactory;
     }
 
     public String add(String input) {
@@ -32,7 +35,7 @@ public class StringCalculatorValidation extends StringCalculatorDecorator {
     private Optional<String> getErrorMessage(String input) {
         Separator separator = stringManipulator.getSeparator(input);
         if (separator.isCustom()) input = stringManipulator.removeSeparatorFromInput(input);
-        IValidator inputValidator = new InputValidator(input, separator, errorMessages, stringManipulator);
+        IValidator inputValidator = inputValidatorFactory.create(input, separator, errorMessages, stringManipulator);
 
         if (!inputValidator.isValid()) {
             List<Error> errors = new ArrayList<>();

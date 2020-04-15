@@ -11,6 +11,8 @@ import org.tdd.calc.manipulation.IStringManipulator;
 import org.tdd.calc.manipulation.StringManipulator;
 import org.tdd.calc.messaging.ErrorMessages;
 import org.tdd.calc.messaging.IErrorMessages;
+import org.tdd.calc.validation.IInputValidatorFactory;
+import org.tdd.calc.validation.InputValidatorFactory;
 import org.tdd.calc.validation.StringCalculatorValidation;
 
 import java.util.stream.Stream;
@@ -26,8 +28,10 @@ public class AddingStringCalculatorTest {
         IConverter converter = new Converter();
         IErrorMessages errorMessages = new ErrorMessages();
         IStringManipulator stringManipulator = new StringManipulator();
+        IInputValidatorFactory inputValidatorFactory = new InputValidatorFactory();
 
-        sut = new StringCalculatorValidation(new StringCalculator(converter, stringManipulator), stringManipulator, errorMessages);
+        sut = new StringCalculatorValidation(new StringCalculator(converter, stringManipulator),
+                stringManipulator, errorMessages, inputValidatorFactory);
     }
 
     @Test
