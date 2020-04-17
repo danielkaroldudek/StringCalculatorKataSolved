@@ -1,36 +1,35 @@
+import ParameterResolvers.ConverterParameterResolver;
+import ParameterResolvers.ErrorMessagesParameterResolver;
+import ParameterResolvers.InputValidatorFactoryParameterResolver;
+import ParameterResolvers.StringManipulatorParameterResolver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.tdd.calc.IStringCalculator;
 import org.tdd.calc.StringCalculator;
-import org.tdd.calc.conversion.Converter;
 import org.tdd.calc.conversion.IConverter;
 import org.tdd.calc.manipulation.IStringManipulator;
-import org.tdd.calc.manipulation.StringManipulator;
-import org.tdd.calc.messaging.ErrorMessages;
 import org.tdd.calc.messaging.IErrorMessages;
 import org.tdd.calc.validation.IInputValidatorFactory;
-import org.tdd.calc.validation.InputValidatorFactory;
 import org.tdd.calc.validation.StringCalculatorValidation;
 
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(ConverterParameterResolver.class)
+@ExtendWith(ErrorMessagesParameterResolver.class)
+@ExtendWith(StringManipulatorParameterResolver.class)
+@ExtendWith({InputValidatorFactoryParameterResolver.class})
 public class SubtractingStringCalculatorTest {
     private IStringCalculator sut;
 
     @BeforeEach
-    public void init() {
-        //TODO: Move to BDD as integration tests between classes.
-        //Other classes should have independent Unit Tests with mocking framework to isolate and test the classes.
-        IConverter converter = new Converter();
-        IErrorMessages errorMessages = new ErrorMessages();
-        IStringManipulator stringManipulator = new StringManipulator();
-        IInputValidatorFactory inputValidatorFactory = new InputValidatorFactory();
-
+    public void init(IConverter converter, IErrorMessages errorMessages, IStringManipulator stringManipulator,
+                     IInputValidatorFactory inputValidatorFactory) {
         sut = new StringCalculatorValidation(new StringCalculator(converter, stringManipulator),
                 stringManipulator, errorMessages, inputValidatorFactory);
     }
