@@ -10,6 +10,15 @@ jobs:
 
     steps:
       - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "pom.xml" }}
+          - v1-dependencies-
+      - run: mvn dependencies:go-offline
+      - save_cache:
+          paths:
+          - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
       - run:
           name: "Run unit tests and send the report to coveralls"
           command: mvn -Drepo_token=$COVERALLS_REPO_TOKEN clean test jacoco:report coveralls:report
