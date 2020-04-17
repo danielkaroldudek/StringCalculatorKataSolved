@@ -4,23 +4,25 @@ jobs:
     docker:
       - image: circleci/openjdk:11-jdk
 
-    working_directory: ~/repo
-
     environment:
       JVM_OPTS: -Xmx3200m
       TERM: dumb
 
     steps:
       - checkout
+
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "pom.xml" }}
-          - v1-dependencies-
+            - m2-{{ checksum "pom.xml" }}
+            - m2- # used if checksum fails
+
       - run: mvn dependencies:go-offline
+
       - save_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
-          - ~/.m2
-          key: v1-dependencies-{{ checksum "pom.xml" }}
+            - ~/.m2
+
       - run:
           name: "Run unit tests and send the report to coveralls"
           command: mvn -Drepo_token=$COVERALLS_REPO_TOKEN clean test jacoco:report coveralls:report
