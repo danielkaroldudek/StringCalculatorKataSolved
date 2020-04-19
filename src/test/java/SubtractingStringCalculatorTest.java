@@ -24,53 +24,53 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(ErrorMessagesParameterResolver.class)
 @ExtendWith(StringManipulatorParameterResolver.class)
 @ExtendWith({InputValidatorFactoryParameterResolver.class})
-public class SubtractingStringCalculatorTest {
+class SubtractingStringCalculatorTest {
     private IStringCalculator sut;
 
     @BeforeEach
-    public void init(IConverter converter, IErrorMessages errorMessages, IStringManipulator stringManipulator,
+    void init(IConverter converter, IErrorMessages errorMessages, IStringManipulator stringManipulator,
                      IInputValidatorFactory inputValidatorFactory) {
         sut = new StringCalculatorValidation(new StringCalculator(converter, stringManipulator),
                 stringManipulator, errorMessages, inputValidatorFactory);
     }
 
     @Test
-    public void shouldReturnZeroWhenGotEmptyString() {
+    void shouldReturnZeroWhenGotEmptyString() {
         assertThat(sut.sub("")).isEqualTo("0");
     }
 
     @Test
-    public void shouldReturnNumberWhenGivenNumber() {
+    void shouldReturnNumberWhenGivenNumber() {
         assertThat(sut.sub("1")).isEqualTo("1");
     }
 
     @Test
-    public void shouldReturnSubOfTwoNumbersWhenSeparatedByComma() {
+    void shouldReturnSubOfTwoNumbersWhenSeparatedByComma() {
         assertThat(sut.sub("1,2")).isEqualTo("-1");
     }
 
     @Test
-    public void shouldReturnSubOfTwoDoubleNumbersWhenSeparatedByComma() {
+    void shouldReturnSubOfTwoDoubleNumbersWhenSeparatedByComma() {
         assertThat(sut.sub("1.1,1.2")).isEqualTo("-0.1");
     }
 
     @Test
-    public void shouldReturnSubOfMultipleNumbersWhenSeparatedByComma() {
+    void shouldReturnSubOfMultipleNumbersWhenSeparatedByComma() {
         assertThat(sut.sub("1,2.2,3,4.4,5")).isEqualTo("-13.6");
     }
 
     @Test
-    public void shouldReturnSubOfNumbersWhenSeparatedByCommaAndNewLine() {
+    void shouldReturnSubOfNumbersWhenSeparatedByCommaAndNewLine() {
         assertThat(sut.sub("1\n2,3")).isEqualTo("-4");
     }
 
     @ParameterizedTest
-    @MethodSource("shouldReturnErrorMessageWithIndexWhenSeparatorsNextToEachOtherParameters")
-    public void shouldReturnErrorMessageWithIndexWhenSeparatorsNextToEachOther(String[] input) {
+    @MethodSource
+    void shouldReturnErrorMessageWithIndexWhenSeparatorsNextToEachOther(String[] input) {
         assertThat(sut.sub(input[0])).isEqualTo(input[1]);
     }
 
-    static Stream<Arguments> shouldReturnErrorMessageWithIndexWhenSeparatorsNextToEachOtherParameters() {
+    static Stream<Arguments> shouldReturnErrorMessageWithIndexWhenSeparatorsNextToEachOther() {
         return Stream.of(
                 Arguments.of((Object) new String[] {
                         "175.2,\n35", "Number expected but '\\n' found at position 6"
@@ -82,12 +82,12 @@ public class SubtractingStringCalculatorTest {
     }
 
     @ParameterizedTest
-    @MethodSource("shouldReturnEOFExceptionWhenSeparatorInLastPositionParameters")
-    public void shouldReturnEOFExceptionWhenSeparatorInLastPosition(String[] input) {
+    @MethodSource
+    void shouldReturnEOFExceptionWhenSeparatorInLastPosition(String[] input) {
         assertThat(sut.sub(input[0])).isEqualTo(input[1]);
     }
 
-    static Stream<Arguments> shouldReturnEOFExceptionWhenSeparatorInLastPositionParameters() {
+    static Stream<Arguments> shouldReturnEOFExceptionWhenSeparatorInLastPosition() {
         return Stream.of(
                 Arguments.of((Object) new String[] {
                         "1,3,", "Number expected but EOF found"
@@ -99,12 +99,12 @@ public class SubtractingStringCalculatorTest {
     }
 
     @ParameterizedTest
-    @MethodSource("shouldReturnSubWhenSeparatedByCustomSeparatorParameters")
-    public void shouldReturnSubWhenSeparatedByCustomSeparator(String[] input) {
+    @MethodSource
+    void shouldReturnSubWhenSeparatedByCustomSeparator(String[] input) {
         assertThat(sut.sub(input[0])).isEqualTo(input[1]);
     }
 
-    static Stream<Arguments> shouldReturnSubWhenSeparatedByCustomSeparatorParameters() {
+    static Stream<Arguments> shouldReturnSubWhenSeparatedByCustomSeparator() {
         return Stream.of(
                 Arguments.of((Object) new String[]{"//;\n1;2", "-1"}),
                 Arguments.of((Object) new String[]{"//|\n1|2|3", "-4"}),
@@ -119,12 +119,12 @@ public class SubtractingStringCalculatorTest {
     }
 
     @ParameterizedTest
-    @MethodSource("shouldReturnExceptionWhenAtLeastOneNegativeNumberProvidedParameters")
+    @MethodSource
     void shouldReturnExceptionWhenAtLeastOneNegativeNumberProvided(String[] input) {
         assertThat(sut.sub(input[0])).isEqualTo(input[1]);
     }
 
-    static Stream<Arguments> shouldReturnExceptionWhenAtLeastOneNegativeNumberProvidedParameters() {
+    static Stream<Arguments> shouldReturnExceptionWhenAtLeastOneNegativeNumberProvided() {
         return Stream.of(
                 Arguments.of((Object) new String[]{"-1,2", "Negative not allowed : -1"}),
                 Arguments.of((Object) new String[]{"2,-4,-5", "Negative not allowed : -4, -5"}),
@@ -133,12 +133,12 @@ public class SubtractingStringCalculatorTest {
     }
 
     @ParameterizedTest
-    @MethodSource("shouldReturnMultipleExceptionsWhenMultipleErrorsFoundParameters")
+    @MethodSource
     void shouldReturnMultipleExceptionsWhenMultipleErrorsFound(String[] input) {
         assertThat(sut.sub(input[0])).isEqualTo(input[1]);
     }
 
-    static Stream<Arguments> shouldReturnMultipleExceptionsWhenMultipleErrorsFoundParameters() {
+    static Stream<Arguments> shouldReturnMultipleExceptionsWhenMultipleErrorsFound() {
         return Stream.of(
                 Arguments.of((Object) new String[]{"-1,,2", "Number expected but ',' found at position 2\\nNegative not allowed : -1"}),
                 Arguments.of((Object) new String[]{"-1\n\n2", "Number expected but '\\n' found at position 2\\nNegative not allowed : -1"})
